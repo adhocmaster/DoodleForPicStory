@@ -36,8 +36,8 @@ if sys.modules.get( 'DoodleDataGeneratorByClass', False ) != False :
     
 from dataProcessors.DoodleDataGeneratorByClass import DoodleDataGeneratorByClass
 
-trainGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='first', batch_size = 32, batchesPerEpoch = 10000)
-validationGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='second', batch_size = 32, batchesPerEpoch = 3000)
+trainGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='first', batch_size = 16, batchesPerEpoch = 1000)
+validationGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='second', batch_size = 16, batchesPerEpoch = 300)
 
 ################### Classifier Factory ############################
 if sys.modules.get( 'classifiers.ClassifierFactory', False ) != False :
