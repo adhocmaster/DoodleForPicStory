@@ -1,5 +1,5 @@
 import yaml
-from ..library.DotDict import DotDict
+from library.DotDict import DotDict
 
 
 class Configuration:

@@ -2,3 +2,6 @@ test: This is nothing
 
 test2:
   test22: this is something
+
+dataset:
+  maxPerClass: 1000000

@@ -1,5 +1,5 @@
 import unittest
-from ..library.Configuration import Configuration
+from library.Configuration import Configuration
 
 class ConfigurationTest(unittest.TestCase):
 

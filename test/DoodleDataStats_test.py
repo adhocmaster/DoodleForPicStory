@@ -1,6 +1,7 @@
 import unittest
 from dataProcessors.DoodleDataStats import DoodleDataStats
 from dataProcessors.DataUtils import DataUtils
+import datetime
 
 class DoodleDataStatsTest(unittest.TestCase):
 
@@ -17,8 +18,23 @@ class DoodleDataStatsTest(unittest.TestCase):
 
         assert 'The_Eiffel_Tower' in dataStats.stats['classes']
 
-        savePath = 'persistentCache/doodleStatsNov20.dill'
-        dataStats.save(savePath)
+        dataStats.saveToPersistenCacheWithToday()
+        pass
+
+
+    def test_PersistentLoad(self):
+
+        dataStats = DoodleDataStats("folder")
+
+        dataStats.loadFromPersistentCacheByDate(datetime.datetime(2019, 11, 21))
+
+        print(dataStats.stats)
+
+        assert dataStats.stats['countClasses'] > 0
+
+        assert 'The_Eiffel_Tower' in dataStats.stats['classes']
+
+
 
 if __name__ == '__main__':
     unittest.main()
