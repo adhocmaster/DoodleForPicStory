@@ -17,7 +17,9 @@ class ClassifierFactory:
     def __init__(self):
         self.templates = [
             'UpSampling',
-            'UpSamplingBN'
+            'UpSamplingBN',
+            'Basic',
+            'BasicBN'
         ]
         pass
 
@@ -44,7 +46,8 @@ class ClassifierFactory:
         modelInput, 
         loss,
         optimizer,
-        metrics 
+        metrics,
+        batchNormalization = False 
         ):
         x = layers.Conv2D(64, 
             kernel_size = (5, 5), 
@@ -52,9 +55,15 @@ class ClassifierFactory:
             )(modelInput)
 
         x = layers.LeakyReLU(alpha=0.1)(x)
-        x = layers.Dropout(0.1)(x)
+        if batchNormalization:
+            x = layers.BatchNormalization()(x)
+        else:
+            x = layers.Dropout(0.1)(x)
 
         x = layers.Conv2D(64, kernel_size=(5, 5), activation=activations.tanh, padding='same')(x)
+        if batchNormalization:
+            x = layers.BatchNormalization()(x)
+
         x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
         x = layers.UpSampling2D(size=(2,2))(x)
 
@@ -85,33 +94,53 @@ class ClassifierFactory:
         optimizer,
         metrics 
         ):
-        return None
+        return self.getUpSampling(outputClasses, modelInput, loss, optimizer, metrics, batchNormalization=True)
+        
+    
+    def getBasic(self, 
+        outputClasses,
+        modelInput, 
+        loss,
+        optimizer,
+        metrics,
+        batchNormalization = False 
+        ):
         x = layers.Conv2D(64, 
             kernel_size = (5, 5), 
-            padding = 'same'
+            padding = 'valid'
             )(modelInput)
 
-        x = layers.LeakyReLU(alpha=0.1)(x)
-        x = layers.BatchNormalization()(x)
+        x = layers.ReLU()(x)
+        if batchNormalization:
+            x = layers.BatchNormalization()(x)
+        x = layers.MaxPooling2D(pool_size=(2,2))(x)
 
-        x = layers.Conv2D(32, kernel_size=(5, 5), activation=activations.tanh, padding='same')(x)
-        x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
-        x = layers.UpSampling2D(size=(2,2))(x)
-
-        x = layers.Conv2D(8, kernel_size=(4, 4), activation=activations.relu, padding='same')(x)
-        x = layers.BatchNormalization()(x)
+        x = layers.Conv2D(64, kernel_size=(5, 5), activation=activations.relu, padding='valid')(x)
+        if batchNormalization:
+            x = layers.BatchNormalization()(x)
+        x = layers.MaxPooling2D(pool_size=(2,2))(x)
 
         x = layers.Flatten()(x)
-        x = layers.Dense(outputClasses*100)(x)
-        x = layers.LeakyReLU(alpha=0.1)(x)
+        x = layers.Dense(1000)(x)
+        x = layers.ReLU()(x)
         x = layers.Dropout(0.2)(x)
         x = layers.Dense(outputClasses, activation=activations.softmax)(x)
 
-        model = models.Model(modelInput, x, name = "Dropout-Max-Pool-UpSampling")
+        model = models.Model(modelInput, x, name = "Basic")
         # model.summary()
         model.compile(optimizer=optimizer,
              loss = loss,
              metrics = metrics)
 
         return model
+
         
+    
+    def getBasicBN(self, 
+        outputClasses,
+        modelInput, 
+        loss,
+        optimizer,
+        metrics 
+        ):
+        return self.getBasic(outputClasses, modelInput, loss, optimizer, metrics, batchNormalization=True)
