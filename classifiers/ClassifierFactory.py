@@ -30,7 +30,7 @@ class ClassifierFactory:
         inputShape = (28, 28, 1), 
         loss = losses.MSE,
         optimizer = optimizers.Nadam(lr=0.002),
-        metrics = [metrics.categorical_accuracy, metrics.MSE, metrics.MAE]
+        metrics = [metrics.categorical_accuracy, metrics.MSE]
     ):
 
         # if template not in self.templates:
@@ -72,7 +72,7 @@ class ClassifierFactory:
         # x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
 
         x = layers.Flatten()(x)
-        x = layers.Dense(outputClasses*100)(x)
+        x = layers.Dense(outputClasses*10)(x)
         x = layers.ReLU()(x)
         x = layers.Dropout(0.2)(x)
         x = layers.Dense(outputClasses, activation=activations.softmax)(x)
@@ -121,7 +121,7 @@ class ClassifierFactory:
         x = layers.MaxPooling2D(pool_size=(2,2))(x)
 
         x = layers.Flatten()(x)
-        x = layers.Dense(1000)(x)
+        x = layers.Dense(outputClasses*10)(x)
         x = layers.ReLU()(x)
         x = layers.Dropout(0.2)(x)
         x = layers.Dense(outputClasses, activation=activations.softmax)(x)
