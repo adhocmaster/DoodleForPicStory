@@ -1,0 +1,117 @@
+from keras import models
+from keras import layers
+from keras import optimizers
+from keras import losses
+from keras import activations
+from keras import metrics
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Convolution2D, MaxPooling2D
+from keras.layers.convolutional import ZeroPadding2D
+from keras.utils import np_utils
+from keras.models import load_model
+
+class ClassifierFactory:
+
+
+    def __init__(self):
+        self.templates = [
+            'UpSampling',
+            'UpSamplingBN'
+        ]
+        pass
+
+    
+    def create(self, 
+        template, 
+        outputClasses,
+        inputShape = (28, 28, 1), 
+        loss = losses.MSE,
+        optimizer = optimizers.Nadam(lr=0.002),
+        metrics = [metrics.categorical_accuracy, metrics.MSE, metrics.MAE]
+    ):
+
+        # if template not in self.templates:
+        #     raise Exception(f'{template} does not have any template')
+
+        method = getattr(self, 'get' + template, f'{template} does not have any template')
+        modelInput = layers.Input(shape=inputShape)
+        return method(outputClasses, modelInput, loss, optimizer, metrics)
+
+
+    def getUpSampling(self, 
+        outputClasses,
+        modelInput, 
+        loss,
+        optimizer,
+        metrics 
+        ):
+        x = layers.Conv2D(64, 
+            kernel_size = (5, 5), 
+            padding = 'same'
+            )(modelInput)
+
+        x = layers.LeakyReLU(alpha=0.1)(x)
+        x = layers.Dropout(0.1)(x)
+
+        x = layers.Conv2D(64, kernel_size=(5, 5), activation=activations.tanh, padding='same')(x)
+        x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
+        x = layers.UpSampling2D(size=(2,2))(x)
+
+        # x = layers.Conv2D(8, kernel_size=(4, 4), activation=activations.relu, padding='valid')(x)
+        # x = layers.Dropout(0.1)(x)
+        # x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
+
+        x = layers.Flatten()(x)
+        x = layers.Dense(outputClasses*100)(x)
+        x = layers.ReLU()(x)
+        x = layers.Dropout(0.2)(x)
+        x = layers.Dense(outputClasses, activation=activations.softmax)(x)
+
+        model = models.Model(modelInput, x, name = "Dropout-Max-Pool-UpSampling")
+        # model.summary()
+        model.compile(optimizer=optimizer,
+             loss = loss,
+             metrics = metrics)
+
+        return model
+
+
+
+    def getUpSamplingBN(self, 
+        outputClasses,
+        modelInput, 
+        loss,
+        optimizer,
+        metrics 
+        ):
+        return None
+        x = layers.Conv2D(64, 
+            kernel_size = (5, 5), 
+            padding = 'same'
+            )(modelInput)
+
+        x = layers.LeakyReLU(alpha=0.1)(x)
+        x = layers.BatchNormalization()(x)
+
+        x = layers.Conv2D(32, kernel_size=(5, 5), activation=activations.tanh, padding='same')(x)
+        x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
+        x = layers.UpSampling2D(size=(2,2))(x)
+
+        x = layers.Conv2D(8, kernel_size=(4, 4), activation=activations.relu, padding='same')(x)
+        x = layers.BatchNormalization()(x)
+
+        x = layers.Flatten()(x)
+        x = layers.Dense(outputClasses*100)(x)
+        x = layers.LeakyReLU(alpha=0.1)(x)
+        x = layers.Dropout(0.2)(x)
+        x = layers.Dense(outputClasses, activation=activations.softmax)(x)
+
+        model = models.Model(modelInput, x, name = "Dropout-Max-Pool-UpSampling")
+        # model.summary()
+        model.compile(optimizer=optimizer,
+             loss = loss,
+             metrics = metrics)
+
+        return model
+        
