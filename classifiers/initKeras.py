@@ -15,6 +15,8 @@ from keras.models import load_model
 ## extra imports to set GPU options
 import tensorflow as tf
 from keras import backend as k
+
+tf.logging.set_verbosity(tf.logging.ERROR)
  
 ###################################
 # TensorFlow wizardry
