@@ -17,14 +17,16 @@ class StrategyRandomClassRandomSample(Strategy):
         choices = np.unique(classIndices, return_counts = True)
 
         freq = choices[1]
+        freqClassIndices = choices[0]
         X = np.empty((generator.batch_size, *generator.dim), dtype=np.float32)
         y = np.empty((generator.batch_size, numClasses), dtype=np.float32)
         
         # print( 'categorical values')
         # print(categoricalVals)
         sampleIndexInBatch = 0
-        for classIndex in range(numClasses):
-            numItems = freq[classIndex]
+        for i in range(len(freq)):
+            classIndex = freqClassIndices[i]
+            numItems = freq[i]
             items = self.getRandomItems(generator, classIndex, numItems)
             for item in items:
                 X[sampleIndexInBatch, ] = item.reshape(28, 28, 1) / 255
@@ -48,7 +50,7 @@ class StrategyRandomClassRandomSample(Strategy):
         else:
             start = int( allItems.shape[0] * generator.split )
         
-        print(f'getting data from low - {start} high - {end} of class {generator.classes[classIndex]}')
+        # print(f'getting data from low - {start} high - {end} of class {generator.classes[classIndex]}')
         choices = np.random.randint(start, end, size=size)
 
         for i in choices:
