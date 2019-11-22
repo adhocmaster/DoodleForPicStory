@@ -47,3 +47,13 @@ if sys.modules.get( 'ClassifierFactory', False ) != False :
     
 from classifiers.ClassifierFactory import ClassifierFactory
 classifierFactory = ClassifierFactory()
+
+
+################## Classifier IO ###########################
+if sys.modules.get( 'classifiers.ClassifierIO', False ) != False :
+    del sys.modules['classifiers.ClassifierIO'] 
+if sys.modules.get( 'ClassifierIO', False ) != False :
+    del sys.modules['ClassifierIO'] 
+    
+from classifiers.ClassifierIO import ClassifierIO
+classifierIO = ClassifierIO()
