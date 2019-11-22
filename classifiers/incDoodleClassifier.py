@@ -14,7 +14,7 @@ from library.LivePlotKeras import *
 
 logging.warning( "LivePlotKeras loaded" )
 
-livePlotKeras = LivePlotKeras()
+livePlotKeras = LivePlotKeras('categorical_accuracy')
 
 ############# Data Stats ##################
 ##### Expects dataStatsDate to load persistent data stats ##############
@@ -36,8 +36,8 @@ if sys.modules.get( 'DoodleDataGeneratorByClass', False ) != False :
     
 from dataProcessors.DoodleDataGeneratorByClass import DoodleDataGeneratorByClass
 
-trainGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='first', batch_size = 16, batchesPerEpoch = 1000)
-validationGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='second', batch_size = 16, batchesPerEpoch = 300)
+trainGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='first', batch_size = 16, batchesPerEpoch = 100)
+validationGenerator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='second', batch_size = 16, batchesPerEpoch = 30)
 
 ################### Classifier Factory ############################
 if sys.modules.get( 'classifiers.ClassifierFactory', False ) != False :

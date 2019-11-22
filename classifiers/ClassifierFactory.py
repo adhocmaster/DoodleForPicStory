@@ -28,9 +28,9 @@ class ClassifierFactory:
         template, 
         outputClasses,
         inputShape = (28, 28, 1), 
-        loss = losses.MSE,
+        loss = losses.categorical_crossentropy,
         optimizer = optimizers.Nadam(lr=0.002),
-        metrics = [metrics.categorical_accuracy, metrics.MSE]
+        metrics = [metrics.categorical_accuracy]
     ):
 
         # if template not in self.templates:
