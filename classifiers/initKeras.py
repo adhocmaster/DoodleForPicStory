@@ -34,3 +34,4 @@ config.gpu_options.per_process_gpu_memory_fraction = gpuLimit
 k.tensorflow_backend.set_session(tf.Session(config=config))
 logging.warning(k.tensorflow_backend._get_available_gpus()) 
 ###################################
+
