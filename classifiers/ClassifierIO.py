@@ -8,7 +8,7 @@ class ClassifierIO:
 
     def __init__(self, engine='keras'):
 
-        self.sourceHDD = 'persistenCache/classifiers/'
+        self.sourceHDD = 'persistentCache/classifiers/'
         self.destFolder = self.sourceHDD
 
         self.engine = engine
