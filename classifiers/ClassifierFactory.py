@@ -67,8 +67,8 @@ class ClassifierFactory:
         x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
         x = layers.UpSampling2D(size=(2,2))(x)
 
-        # x = layers.Conv2D(8, kernel_size=(4, 4), activation=activations.relu, padding='valid')(x)
-        # x = layers.Dropout(0.1)(x)
+        x = layers.Conv2D(8, kernel_size=(4, 4), activation=activations.relu, padding='same')(x)
+        x = layers.Dropout(0.1)(x)
         # x = layers.MaxPooling2D(pool_size=(2,2), padding='same')(x)
 
         x = layers.Flatten()(x)
