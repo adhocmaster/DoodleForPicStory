@@ -109,3 +109,5 @@ venv.bak/
 notebooks/throttle.ctrl
 testLibraryImports.ipynb
 notebooks/pywikibot.lwp
+*.h5
+*.h5
