@@ -177,6 +177,8 @@ class ClassifierFactory:
         if batchNormalization:
             x = layers.BatchNormalization()(x)
         x = layers.MaxPooling2D(pool_size=(2,2), strides=(1,1))(x)
+        
+        x = layers.MaxPooling2D(pool_size=(2,2))(x)
 
         x = layers.Flatten()(x)
         x = layers.Dense(outputClasses*2)(x)
