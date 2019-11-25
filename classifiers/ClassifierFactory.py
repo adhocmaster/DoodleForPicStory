@@ -125,7 +125,7 @@ class ClassifierFactory:
         x = layers.MaxPooling2D(pool_size=(2,2))(x)
 
         x = layers.Flatten()(x)
-        x = layers.Dense(outputClasses*10)(x)
+        x = layers.Dense(outputClasses*5)(x)
         x = layers.ReLU()(x)
         x = layers.Dropout(0.2)(x)
         x = layers.Dense(outputClasses, activation=activations.softmax)(x)
