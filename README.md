@@ -4,4 +4,4 @@
 1. Build different generators for doodle training
 
 # Documentation
-(on guthub wiki) (https://github.com/adhocmaster/DoodleForPicStory/wiki)
+[on guthub wiki] (https://github.com/adhocmaster/DoodleForPicStory/wiki)
