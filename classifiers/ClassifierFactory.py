@@ -19,7 +19,8 @@ class ClassifierFactory:
             'UpSampling',
             'UpSamplingBN',
             'Basic',
-            'BasicBN'
+            'BasicBN',
+            'BasicSmallMaxPool'
         ]
         pass
 
@@ -150,3 +151,46 @@ class ClassifierFactory:
         metrics 
         ):
         return self.getBasic(outputClasses, modelInput, loss, optimizer, metrics, batchNormalization=True)
+
+
+    
+    
+    def getBasicSmallMaxPool(self, 
+        outputClasses,
+        modelInput, 
+        loss,
+        optimizer,
+        metrics,
+        batchNormalization = False 
+        ):
+        x = layers.Conv2D(64, 
+            kernel_size = (5, 5), 
+            padding = 'valid'
+            )(modelInput)
+
+        x = layers.ReLU()(x)
+        if batchNormalization:
+            x = layers.BatchNormalization()(x)
+        x = layers.MaxPooling2D(pool_size=(2,2), strides=(1,1))(x)
+
+        x = layers.Conv2D(64, kernel_size=(5, 5), activation=activations.relu, padding='valid')(x)
+        if batchNormalization:
+            x = layers.BatchNormalization()(x)
+        x = layers.MaxPooling2D(pool_size=(2,2), strides=(1,1))(x)
+
+        x = layers.Flatten()(x)
+        x = layers.Dense(outputClasses*5)(x)
+        x = layers.ReLU()(x)
+        x = layers.Dropout(0.2)(x)
+        x = layers.Dense(outputClasses, activation=activations.softmax)(x)
+
+        if batchNormalization:
+            model = models.Model(modelInput, x, name = "BasicBN")
+        else:
+            model = models.Model(modelInput, x, name = "Basic")
+        # model.summary()
+        model.compile(optimizer=optimizer,
+             loss = loss,
+             metrics = metrics)
+
+        return model
