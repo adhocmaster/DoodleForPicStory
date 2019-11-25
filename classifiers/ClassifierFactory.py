@@ -77,7 +77,10 @@ class ClassifierFactory:
         x = layers.Dropout(0.2)(x)
         x = layers.Dense(outputClasses, activation=activations.softmax)(x)
 
-        model = models.Model(modelInput, x, name = "Dropout-Max-Pool-UpSampling")
+        if batchNormalization:
+            model = models.Model(modelInput, x, name = "Dropout-Max-Pool-UpSampling-BN")
+        else:
+            model = models.Model(modelInput, x, name = "Dropout-Max-Pool-UpSampling")
         # model.summary()
         model.compile(optimizer=optimizer,
              loss = loss,
@@ -126,7 +129,10 @@ class ClassifierFactory:
         x = layers.Dropout(0.2)(x)
         x = layers.Dense(outputClasses, activation=activations.softmax)(x)
 
-        model = models.Model(modelInput, x, name = "Basic")
+        if batchNormalization:
+            model = models.Model(modelInput, x, name = "BasicBN")
+        else:
+            model = models.Model(modelInput, x, name = "Basic")
         # model.summary()
         model.compile(optimizer=optimizer,
              loss = loss,
