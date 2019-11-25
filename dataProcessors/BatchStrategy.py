@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class Strategy(ABC):
+class BatchStrategy(ABC):
 
 
     @abstractmethod
