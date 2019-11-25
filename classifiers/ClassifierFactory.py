@@ -372,3 +372,14 @@ class ClassifierFactory:
              metrics = metrics)
 
         return model
+
+
+        
+    def getResNetBN(self, 
+        outputClasses,
+        modelInput, 
+        loss,
+        optimizer,
+        metrics 
+        ):
+        return self.getResNet(outputClasses, modelInput, loss, optimizer, metrics, batchNormalization=True)
