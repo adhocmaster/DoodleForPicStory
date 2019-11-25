@@ -165,7 +165,7 @@ class ClassifierFactory:
         ):
         x = layers.Conv2D(64, 
             kernel_size = (5, 5), 
-            padding = 'valid'
+            padding = 'same'
             )(modelInput)
 
         x = layers.ReLU()(x)
@@ -173,21 +173,21 @@ class ClassifierFactory:
             x = layers.BatchNormalization()(x)
         x = layers.MaxPooling2D(pool_size=(2,2), strides=(1,1))(x)
 
-        x = layers.Conv2D(64, kernel_size=(5, 5), activation=activations.relu, padding='valid')(x)
+        x = layers.Conv2D(32, kernel_size=(5, 5), activation=activations.relu, padding='same')(x)
         if batchNormalization:
             x = layers.BatchNormalization()(x)
         x = layers.MaxPooling2D(pool_size=(2,2), strides=(1,1))(x)
 
         x = layers.Flatten()(x)
-        x = layers.Dense(outputClasses*5)(x)
+        x = layers.Dense(outputClasses*2)(x)
         x = layers.ReLU()(x)
         x = layers.Dropout(0.2)(x)
         x = layers.Dense(outputClasses, activation=activations.softmax)(x)
 
         if batchNormalization:
-            model = models.Model(modelInput, x, name = "BasicBN")
+            model = models.Model(modelInput, x, name = "BasicSmallMaxPoolBN")
         else:
-            model = models.Model(modelInput, x, name = "Basic")
+            model = models.Model(modelInput, x, name = "BasicSmallMaxPool")
         # model.summary()
         model.compile(optimizer=optimizer,
              loss = loss,
