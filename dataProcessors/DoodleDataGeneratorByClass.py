@@ -4,6 +4,19 @@ from dataProcessors.DataUtils import DataUtils
 from dataProcessors.GenerationStrategyType import GenerationStrategyType
 from dataProcessors.ClassficationDataGenerator import ClassficationDataGenerator
 from dataProcessors.StrategyRandomClassRandomSample import StrategyRandomClassRandomSample
+from dataProcessors.StrategyPseudoRandomClassRandomSample import StrategyPseudoRandomClassRandomSample
+
+import threading
+	
+def synchronized(func):
+	
+    func.__lock__ = threading.Lock()
+		
+    def synced_func(*args, **kws):
+        with func.__lock__:
+            return func(*args, **kws)
+
+    return synced_func
 
 class DoodleDataGeneratorByClass(ClassficationDataGenerator):
     'Generates data for Keras'
@@ -11,10 +24,11 @@ class DoodleDataGeneratorByClass(ClassficationDataGenerator):
                 dataStats:dict,
                 split = 0.7,
                 part = 'first',
-                strategy:GenerationStrategyType = GenerationStrategyType.RandomClassRandomSample,
+                strategy:GenerationStrategyType = GenerationStrategyType.PseudoRandomClassRandomSample,
                 batchesPerEpoch = None,
                 batch_size:int = 16, 
-                shuffle = True):
+                shuffle = True,
+                maxCacheClasses = 10):
 
         """[summary]
         """
@@ -35,6 +49,8 @@ class DoodleDataGeneratorByClass(ClassficationDataGenerator):
         self.n_classes = dataStats['countClasses']
         self.n_batches = batchesPerEpoch # will be calculated when calculateBatches is called
         self.shuffle = shuffle
+        self.maxCacheClasses = maxCacheClasses
+        self.classCache = {}
 
         self.calculateBatches()
         self.createBatchGenerator()
@@ -66,6 +82,9 @@ class DoodleDataGeneratorByClass(ClassficationDataGenerator):
         if self.strategy == GenerationStrategyType.RandomClassRandomSample:
             self.batchGenerator = StrategyRandomClassRandomSample()
             return
+        if self.strategy == GenerationStrategyType.PseudoRandomClassRandomSample:
+            self.batchGenerator = StrategyPseudoRandomClassRandomSample()
+            return
 
         raise Exception("Batch generator unavailable for " + self.strategy)
 
@@ -82,7 +101,31 @@ class DoodleDataGeneratorByClass(ClassficationDataGenerator):
         pass
     
     
+    # Class data access
     def getClassItems(self, className):
 
+        # print(f'Searching data for {className}')
+        classData = self.getFromCache(className)
+        if classData is not None:
+            # print(f'Found {className} in cache')
+            return classData
+
         path = self.dataStats['folder'] + '/' + self.dataUtils.convertClassToFilename(className) + '.npy'
-        return np.load(path)
+        classData = np.load(path)
+        self.saveInCache(className, classData)
+        return classData
+
+    
+    def getFromCache(self, className):
+        if className in self.classCache.keys():
+            return self.classCache[className]
+        return None
+
+    @synchronized
+    def saveInCache(self, className, classData):
+
+        if className in self.classCache.keys():
+            return
+        if len(self.classCache) < self.maxCacheClasses:
+            # print(f'Saving {className} in cache')
+            self.classCache[className] = classData

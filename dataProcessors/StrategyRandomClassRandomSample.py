@@ -9,12 +9,16 @@ class StrategyRandomClassRandomSample(Strategy):
         [type] -- [description]
     """
 
+    def __init__(self):
+        self.stats = {}
+
     def getBatch(self, generator, batchIndex):
 
         numClasses = generator.dataStats['countClasses']
         categoricalVals = np.eye(numClasses, dtype=np.float32)
-        classIndices = np.random.randint(0, numClasses, generator.batch_size)
-        choices = np.unique(classIndices, return_counts = True)
+        
+        # 1. Choose classes and number of items to fetch from each class
+        choices = self.chooseClasses(numClasses, generator.batch_size)
 
         freq = choices[1]
         freqClassIndices = choices[0]
@@ -23,11 +27,18 @@ class StrategyRandomClassRandomSample(Strategy):
         
         # print( 'categorical values')
         # print(categoricalVals)
+
+        # 2.0 fetch items for the chosen classes.
         sampleIndexInBatch = 0
         for i in range(len(freq)):
             classIndex = freqClassIndices[i]
             numItems = freq[i]
+
+            # put into stats
+            self.addToStats(classIndex, numItems)
+
             items = self.getRandomItems(generator, classIndex, numItems)
+
             for item in items:
                 X[sampleIndexInBatch, ] = item.reshape(28, 28, 1) / 255
                 y[sampleIndexInBatch, ] = categoricalVals[classIndex]
@@ -59,10 +70,18 @@ class StrategyRandomClassRandomSample(Strategy):
         
         return chosenItems
 
-        
+    
+    def addToStats(self, classIndex, numItems):
+        if classIndex in self.stats.keys():
+            self.stats[classIndex] += numItems
+        else:
+            self.stats[classIndex] = numItems
 
+    # override for different implementation.
+    def chooseClasses(self, numClasses, batchSize):
 
-
+        classIndices = np.random.randint(0, numClasses, batchSize)
+        return np.unique(classIndices, return_counts = True)
 
 
 
