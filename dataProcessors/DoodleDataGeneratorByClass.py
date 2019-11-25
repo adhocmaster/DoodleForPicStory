@@ -3,8 +3,7 @@ import keras
 from dataProcessors.DataUtils import DataUtils
 from dataProcessors.GenerationStrategyType import GenerationStrategyType
 from dataProcessors.ClassficationDataGenerator import ClassficationDataGenerator
-from dataProcessors.StrategyRandomClassRandomSample import StrategyRandomClassRandomSample
-from dataProcessors.StrategyPseudoRandomClassRandomSample import StrategyPseudoRandomClassRandomSample
+from dataProcessors.BatchStrategyFactory import BatchStrategyFactory
 
 import threading
 	
@@ -79,14 +78,8 @@ class DoodleDataGeneratorByClass(ClassficationDataGenerator):
 
     def createBatchGenerator(self):
 
-        if self.strategy == GenerationStrategyType.RandomClassRandomSample:
-            self.batchGenerator = StrategyRandomClassRandomSample()
-            return
-        if self.strategy == GenerationStrategyType.PseudoRandomClassRandomSample:
-            self.batchGenerator = StrategyPseudoRandomClassRandomSample()
-            return
-
-        raise Exception("Batch generator unavailable for " + self.strategy)
+        self.batchGenerator = BatchStrategyFactory().create(self.strategy)
+        pass
 
 
     def __getitem__(self, batchIndex):

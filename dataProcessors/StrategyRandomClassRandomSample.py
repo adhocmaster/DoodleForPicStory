@@ -1,7 +1,7 @@
 import numpy as np
-from dataProcessors.Strategy import Strategy
+from dataProcessors.BatchStrategy import BatchStrategy
 
-class StrategyRandomClassRandomSample(Strategy):
+class StrategyRandomClassRandomSample(BatchStrategy):
 
     """Doesn't care about batch index.
     

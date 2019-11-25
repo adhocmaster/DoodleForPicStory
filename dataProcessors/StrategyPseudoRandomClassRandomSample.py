@@ -15,14 +15,10 @@ class StrategyPseudoRandomClassRandomSample(StrategyRandomClassRandomSample):
         if len(freqClassIndices) <= maxChoices:
             return (classIndices, freq)
 
-        newFreq = np.zeros(maxChoices, dtype=int)
-        newFreqClassIndices = np.zeros(maxChoices, dtype=int)
-
         perclass = int(batchSize / maxChoices)
-        for i in range(maxChoices):
-            newFreqClassIndices[i] = freqClassIndices[i]
-            newFreq[i] = perclass
 
-        newFreq[i] = perclass + batchSize - perclass*maxChoices
+        newFreq = np.full(maxChoices, perclass, dtype=int)
+        newFreqClassIndices = np.random.choice(freqClassIndices, maxChoices)
+        newFreq[0] = perclass + batchSize - perclass*maxChoices
         
         return (newFreqClassIndices, newFreq)

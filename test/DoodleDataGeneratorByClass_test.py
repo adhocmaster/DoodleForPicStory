@@ -10,7 +10,7 @@ class DoodleDataGeneratorByClassTest(unittest.TestCase):
     def testBatches(self):
 
         dataStats = DoodleDataStats("folder")
-        dataStats.loadFromPersistentCacheByDate(datetime(2019, 11, 21))
+        dataStats.loadFromPersistentCacheByDate(datetime(2019, 11, 24))
 
         
         generator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='first')
@@ -24,7 +24,7 @@ class DoodleDataGeneratorByClassTest(unittest.TestCase):
         assert generator.__len__() == int( np.floor(dataStats.stats['countItems'] * 0.7) / 16) 
 
         print(generator.n_batches)
-        X, y = generator.__getitem__(0)
+        _, _ = generator.__getitem__(0)
         # print(X)
         # print(y)
 
@@ -32,7 +32,7 @@ class DoodleDataGeneratorByClassTest(unittest.TestCase):
         generator = DoodleDataGeneratorByClass(dataStats.stats,split=0.7, part='second', batchesPerEpoch=1000)
         assert generator.__len__() == 1000
         print(generator.n_batches)
-        X, y = generator.__getitem__(0)
+        _, _ = generator.__getitem__(0)
 
         pass
 
